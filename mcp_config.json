@@ -1,0 +1,76 @@
+{
+  "mcpServers": {
+    "notion": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@makenotion/notion-mcp-server"
+      ],
+      "env": {
+        "NOTION_API_KEY": "${NOTION_API_KEY}"
+      },
+      "description": "Official Notion MCP server for saving trip plans",
+      "enabled": false,
+      "note": "Set enabled to true and configure NOTION_API_KEY in .env to activate"
+    },
+    "trip-planner-tools": {
+      "description": "Custom MCP tools for trip planning",
+      "tools": [
+        {
+          "name": "save_to_notion",
+          "description": "Save complete trip plan to Notion workspace",
+          "enabled": true
+        },
+        {
+          "name": "export_to_calendar",
+          "description": "Export itinerary to iCal format",
+          "enabled": true
+        },
+        {
+          "name": "create_pdf",
+          "description": "Generate PDF document of trip plan",
+          "enabled": true
+        },
+        {
+          "name": "share_trip",
+          "description": "Generate shareable link for trip plan",
+          "enabled": true
+        }
+      ]
+    }
+  },
+  "features": {
+    "notion_integration": {
+      "enabled": false,
+      "description": "Enable Notion MCP integration for saving trip plans",
+      "setup_instructions": "See MCP_SETUP.md for configuration steps"
+    },
+    "calendar_export": {
+      "enabled": true,
+      "description": "Export itineraries to calendar format (iCal)"
+    },
+    "pdf_generation": {
+      "enabled": true,
+      "description": "Generate PDF documents of trip plans"
+    }
+  },
+  "notion_database_schema": {
+    "properties": {
+      "Title": "title",
+      "Destination": "rich_text",
+      "Duration": "number",
+      "Start Date": "date",
+      "End Date": "date",
+      "Status": "select",
+      "Budget": "number",
+      "Travelers": "number",
+      "Trip Type": "select",
+      "Created By": "rich_text",
+      "Created At": "created_time"
+    },
+    "select_options": {
+      "Status": ["Planning", "Confirmed", "In Progress", "Completed", "Cancelled"],
+      "Trip Type": ["Business", "Leisure", "Adventure", "Family", "Solo", "Couple", "Group"]
+    }
+  }
+}

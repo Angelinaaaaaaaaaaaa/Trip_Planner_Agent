@@ -1,0 +1,112 @@
+{
+  "agents": [
+    {
+      "name": "TripCoordinator",
+      "description": "Main trip planning coordinator that helps users plan their perfect vacation. Provides destination recommendations, detailed itineraries, budget optimization, and local insights powered by Claude AI.",
+      "function": "trip_planning",
+      "capabilities": [
+        "Personalized destination recommendations",
+        "Multi-day itinerary generation",
+        "Budget analysis and optimization",
+        "Weather and local insights",
+        "Cultural tips and travel advice"
+      ],
+      "keywords": [
+        "travel",
+        "trip planning",
+        "vacation",
+        "destination",
+        "itinerary",
+        "budget",
+        "tourism",
+        "adventure"
+      ],
+      "chat_protocol": true,
+      "port": 8001,
+      "endpoint": "http://localhost:8001/submit"
+    },
+    {
+      "name": "DestinationExpert",
+      "description": "Specialized agent for destination recommendations based on user preferences, interests, budget, and travel style.",
+      "function": "destination_recommendation",
+      "capabilities": [
+        "AI-powered destination matching",
+        "Budget-aware recommendations",
+        "Season and weather considerations",
+        "Activity-based suggestions"
+      ],
+      "keywords": [
+        "destination",
+        "recommendation",
+        "where to go",
+        "travel advice"
+      ],
+      "port": 8002
+    },
+    {
+      "name": "ItineraryPlanner",
+      "description": "Creates detailed day-by-day itineraries with activities, restaurants, and logistics using Claude's advanced planning.",
+      "function": "itinerary_creation",
+      "capabilities": [
+        "Day-by-day planning",
+        "Activity recommendations",
+        "Restaurant suggestions",
+        "Timing and logistics optimization"
+      ],
+      "keywords": [
+        "itinerary",
+        "schedule",
+        "day plan",
+        "activities"
+      ],
+      "port": 8003
+    },
+    {
+      "name": "BudgetOptimizer",
+      "description": "Analyzes travel budgets and provides optimization recommendations to maximize value while minimizing costs.",
+      "function": "budget_optimization",
+      "capabilities": [
+        "Budget breakdown analysis",
+        "Cost optimization suggestions",
+        "Hidden cost identification",
+        "Value maximization strategies"
+      ],
+      "keywords": [
+        "budget",
+        "cost",
+        "savings",
+        "optimization",
+        "expenses"
+      ],
+      "port": 8004
+    },
+    {
+      "name": "InsightsAgent",
+      "description": "Provides local cultural insights, weather information, and practical travel tips for destinations worldwide.",
+      "function": "local_insights",
+      "capabilities": [
+        "Cultural etiquette guidance",
+        "Weather forecasts",
+        "Safety tips",
+        "Local customs and traditions",
+        "Practical travel advice"
+      ],
+      "keywords": [
+        "insights",
+        "culture",
+        "weather",
+        "local tips",
+        "customs"
+      ],
+      "port": 8005
+    }
+  ],
+  "system": {
+    "name": "Trip Planner Agent System",
+    "version": "1.0.0",
+    "llm": "Claude (Anthropic)",
+    "framework": "uAgents (Fetch.ai)",
+    "architecture": "Multi-agent collaboration",
+    "chat_protocol": "Enabled on TripCoordinator"
+  }
+}
