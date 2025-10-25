@@ -15,6 +15,7 @@ A fully functional AI-powered trip planning agent built with **Fetch.ai's uAgent
 - **📍 Contextual Recommendations** - Matches attractions to your preferences (food, culture, nature, nightlife, family-friendly)
 - **🗺️ Interactive Links** - Every attraction includes Google Maps links for easy navigation
 - **📆 Calendar Export** - Generates .ics files you can import into Google Calendar, Apple Calendar, etc.
+- **🌐 Web Interface** - Beautiful, responsive web UI for easy access from any device
 - **💬 Agentverse Chat Protocol** - Fully compatible with ASI:One for discoverability and user interaction
 - **⚡ Zero Setup** - Works immediately with just Claude API key—no need for Google Places, Yelp, or other external APIs
 
@@ -38,6 +39,8 @@ User → ASI:One → Trip Coordinator Agent
 5. **[exporters.py](exporters.py)** - Markdown formatter + calendar file generator
 
 ## 🚀 Quick Start
+
+> **🌐 Want to use the web interface?** See the [Web Application Guide](#-web-application) below!
 
 ### Prerequisites
 
@@ -270,6 +273,66 @@ Try these prompts in ASI:One:
 - "Plan a 3-day trip to Tokyo"
 - "I want to visit Barcelona for 2 days focusing on architecture"
 - "Family vacation in Singapore, 4 days, kid-friendly"
+
+## 🌐 Web Application
+
+### Beautiful Web Interface for Everyone!
+
+In addition to the uAgents framework and ASI:One integration, this project includes a **stunning web application** that anyone can use from their browser!
+
+#### Features
+- 🎨 Modern, responsive dark theme UI
+- 📱 Works on desktop, tablet, and mobile
+- 🚀 One-click example prompts
+- 📥 Calendar export functionality
+- 🗺️ Interactive Google Maps links
+- ⚡ Real-time trip planning with Claude AI
+
+#### Quick Start
+
+**Run locally in 2 commands:**
+
+```bash
+# Terminal 1: Start backend
+python web_app/backend/app.py
+
+# Terminal 2: Start frontend
+cd web_app/frontend/public && python3 -m http.server 8080
+```
+
+Then open: **http://localhost:8080**
+
+**Or use the one-line start script:**
+```bash
+./start_web_app.sh
+```
+
+#### Deploy Online
+
+Deploy your web app so anyone can access it! Choose your platform:
+
+- **[Railway](https://railway.app)** (Recommended) - Free tier, easiest deployment
+- **[Render](https://render.com)** - Free tier, auto-deploy from GitHub
+- **[Vercel](https://vercel.com)** - Best for frontend (split deployment)
+
+**📚 Complete Deployment Guide:** See [WEB_DEPLOYMENT.md](WEB_DEPLOYMENT.md) for step-by-step instructions!
+
+**📖 Web App Documentation:** See [web_app/README.md](web_app/README.md)
+
+**🎯 Quick Summary:** See [WEB_APP_SUMMARY.md](WEB_APP_SUMMARY.md)
+
+#### File Structure
+
+```
+web_app/
+├── backend/
+│   └── app.py              # Flask REST API
+└── frontend/
+    └── public/
+        ├── index.html      # Web interface
+        ├── styles.css      # Beautiful styling
+        └── app.js          # Frontend logic
+```
 
 ## 🧪 Local Testing
 
@@ -512,11 +575,14 @@ Contributions are welcome! Here's how:
 - [ ] Add more cities (Rome, Amsterdam, Dubai, etc.)
 - [ ] Implement budget tracking
 - [ ] Add transportation directions
-- [ ] Create web UI frontend
+- [x] Create web UI frontend ✅ (Done!)
 - [ ] Add multi-language support
 - [ ] Implement user profiles/preferences storage
 - [ ] Add weather forecasts
 - [ ] Restaurant reservation links
+- [ ] User authentication for saved trips
+- [ ] Social sharing features
+- [ ] PDF itinerary export
 
 ## 📄 License
 

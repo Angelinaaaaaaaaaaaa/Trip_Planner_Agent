@@ -221,7 +221,14 @@ def get_examples():
 
 if __name__ == '__main__':
     print("🚀 Starting Trip Planner Agent API Server...")
-    print("📍 API available at: http://localhost:5000")
+
+    # Get port from environment variable (for production deployment)
+    port = int(os.environ.get('PORT', 5000))
+
+    # Determine if running in production or development
+    debug_mode = os.environ.get('FLASK_ENV', 'production') == 'development'
+
+    print(f"📍 API available at: http://localhost:{port}")
     print("📖 Endpoints:")
     print("   GET  /api/health       - Health check")
     print("   GET  /api/cities       - List supported cities")
@@ -229,4 +236,4 @@ if __name__ == '__main__':
     print("   GET  /api/download/:id - Download calendar file")
     print("   GET  /api/examples     - Get example prompts")
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)

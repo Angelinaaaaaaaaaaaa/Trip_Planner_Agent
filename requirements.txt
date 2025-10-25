@@ -11,3 +11,7 @@ python-dotenv>=1.0.0
 
 # Date/time utilities for calendar export
 python-dateutil>=2.8.2
+
+# Web Application (Flask Backend)
+flask>=3.0.0
+flask-cors>=4.0.0

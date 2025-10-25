@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Trip Planner - Plan Your Perfect Journey</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">🧭 AI Trip Planner</h1>
+                <p class="tagline">Powered by Claude AI & Fetch.ai</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <h2>Plan Your Dream Trip</h2>
+                <p class="description">Tell me where you want to go, how long, and what you're interested in!</p>
+
+                <div class="input-container">
+                    <textarea
+                        id="trip-input"
+                        placeholder='e.g., "Plan a 3-day trip to Tokyo for food and culture"'
+                        rows="3"
+                    ></textarea>
+                    <button id="plan-button" class="primary-button">
+                        <span id="button-text">Plan My Trip</span>
+                        <span id="button-loading" class="loading-spinner" style="display: none;">Planning...</span>
+                    </button>
+                </div>
+
+                <!-- Examples -->
+                <div class="examples-section">
+                    <p class="examples-title">Try these examples:</p>
+                    <div class="examples-grid" id="examples-grid">
+                        <!-- Examples will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Supported Cities -->
+                <div class="cities-section">
+                    <p class="cities-title">Supported Cities:</p>
+                    <div id="cities-list" class="cities-list">Loading...</div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="results-section" style="display: none;">
+                <div class="results-header">
+                    <h2>Your Personalized Itinerary</h2>
+                    <button id="download-button" class="secondary-button">
+                        📅 Download Calendar
+                    </button>
+                </div>
+
+                <!-- Intent Display -->
+                <div class="intent-display" id="intent-display">
+                    <!-- Will show parsed intent here -->
+                </div>
+
+                <!-- Itinerary Display -->
+                <div class="itinerary-display" id="itinerary-display">
+                    <!-- Will show itinerary here -->
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <section class="error-section" id="error-section" style="display: none;">
+                <div class="error-message">
+                    <span class="error-icon">⚠️</span>
+                    <span id="error-text"></span>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with ❤️ for CalHacks 12.0 | Powered by <a href="https://fetch.ai" target="_blank">Fetch.ai</a> & <a href="https://anthropic.com" target="_blank">Claude AI</a></p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
