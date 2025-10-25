@@ -1,0 +1,13 @@
+# Trip Planner Agent Dependencies
+
+# Fetch.ai uAgents framework
+uagents>=0.12.0
+
+# Anthropic Claude API
+anthropic>=0.25.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# Date/time utilities for calendar export
+python-dateutil>=2.8.2

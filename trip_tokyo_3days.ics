@@ -1,0 +1,62 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Trip Planner Agent//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Tokyo Trip
+X-WR-TIMEZONE:UTC
+BEGIN:VEVENT
+DTSTART:20251026T090000
+DTEND:20251026T110000
+SUMMARY:Shibuya Crossing
+DESCRIPTION:Area: Shibuya\nCategories: culture\nMap: https://maps.google.com/?q=Shibuya+Crossing
+LOCATION:Shibuya, Tokyo
+UID:Tokyo-day1-09:00@tripplanner
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20251026T120000
+DTEND:20251026T140000
+SUMMARY:Ichiran Ramen
+DESCRIPTION:Area: Shibuya\nCategories: food\nMap: https://maps.google.com/?q=Ichiran+Ramen+Shibuya
+LOCATION:Shibuya, Tokyo
+UID:Tokyo-day1-12:00@tripplanner
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20251027T090000
+DTEND:20251027T110000
+SUMMARY:Tokyo Skytree
+DESCRIPTION:Area: Sumida\nCategories: culture, architecture\nMap: https://maps.google.com/?q=Tokyo+Skytree
+LOCATION:Sumida, Tokyo
+UID:Tokyo-day2-09:00@tripplanner
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20251027T140000
+DTEND:20251027T160000
+SUMMARY:Senso-ji Temple
+DESCRIPTION:Area: Asakusa\nCategories: culture, history\nMap: https://maps.google.com/?q=Senso-ji+Temple
+LOCATION:Asakusa, Tokyo
+UID:Tokyo-day2-14:00@tripplanner
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20251028T090000
+DTEND:20251028T110000
+SUMMARY:Meiji Shrine
+DESCRIPTION:Area: Harajuku\nCategories: culture, history\nMap: https://maps.google.com/?q=Meiji+Shrine+Tokyo
+LOCATION:Harajuku, Tokyo
+UID:Tokyo-day3-09:00@tripplanner
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20251028T120000
+DTEND:20251028T140000
+SUMMARY:Takeshita Street
+DESCRIPTION:Area: Harajuku\nCategories: food, shopping\nMap: https://maps.google.com/?q=Takeshita+Street+Harajuku
+LOCATION:Harajuku, Tokyo
+UID:Tokyo-day3-12:00@tripplanner
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR
