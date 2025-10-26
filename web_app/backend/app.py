@@ -8,13 +8,14 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import sys
 import os
+from io import BytesIO
 
 # Add parent directory to path to import agent modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from intent import parse_intent
 from planner import build_itinerary
-from exporters import itinerary_to_markdown, itinerary_to_ics
+from exporters import itinerary_to_markdown, itinerary_to_ics_string
 from data_sources import get_supported_cities
 
 app = Flask(__name__)
@@ -141,6 +142,7 @@ def plan_trip():
 def download_calendar(itinerary_id):
     """
     Download calendar file for a specific itinerary.
+    Generates the ICS file in memory without saving to disk.
 
     Parameters:
         itinerary_id: UUID of the itinerary
@@ -154,22 +156,25 @@ def download_calendar(itinerary_id):
 
         itinerary = recent_itineraries[itinerary_id]
 
-        # Generate ICS file in the backend directory
-        backend_dir = os.path.dirname(os.path.abspath(__file__))
-        ics_path = itinerary_to_ics(itinerary, output_dir=backend_dir)
+        # Generate ICS content in memory (no file saved to disk!)
+        ics_content, filename = itinerary_to_ics_string(itinerary)
 
-        if not ics_path or not os.path.exists(ics_path):
+        if not ics_content:
             return jsonify({
                 'success': False,
                 'error': 'Failed to generate calendar file'
             }), 500
 
-        # Send file for download
+        # Convert string to bytes and create in-memory file
+        ics_bytes = BytesIO(ics_content.encode('utf-8'))
+        ics_bytes.seek(0)
+
+        # Send file directly from memory
         return send_file(
-            ics_path,
+            ics_bytes,
             mimetype='text/calendar',
             as_attachment=True,
-            download_name=f'{itinerary.destination.lower()}_trip.ics'
+            download_name=filename
         )
 
     except Exception as e:
