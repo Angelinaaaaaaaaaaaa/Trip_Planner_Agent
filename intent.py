@@ -138,13 +138,46 @@ def _parse_intent_simple(text: str) -> TripIntent:
     if day_match:
         days = int(day_match.group(1))
 
-    # Extract destination (common pattern: "to [City]")
+    # Extract destination - try multiple patterns
     destination = None
-    dest_match = re.search(r'to\s+([A-Za-z\s]+?)(?:\s+for|\s+with|\s*,|\s*$)', text)
+
+    # Pattern 1: "to [City]" (most common)
+    # Remove common verbs before city name: visit, see, explore, etc.
+    dest_match = re.search(r'to\s+(?:visit\s+)?([A-Za-z\s]+?)(?:\s+for|\s+with|\s*[,.]|\s*$)', text, re.IGNORECASE)
     if dest_match:
         dest = dest_match.group(1).strip()
-        # Capitalize properly
+        # Remove punctuation and capitalize properly
+        dest = re.sub(r'[^\w\s]', '', dest)
         destination = ' '.join(word.capitalize() for word in dest.split())
+
+    # Pattern 2: "visit [City]" or "see [City]"
+    if not destination:
+        dest_match = re.search(r'(?:visit|see|explore)\s+([A-Za-z\s]+?)(?:\s+for|\s+with|\s*[,.]|\s*$)', text, re.IGNORECASE)
+        if dest_match:
+            dest = dest_match.group(1).strip()
+            dest = re.sub(r'[^\w\s]', '', dest)
+            destination = ' '.join(word.capitalize() for word in dest.split())
+
+    # Pattern 3: "Show me [City]" or "[City] for X days" or "[City] trip"
+    if not destination:
+        # Try "show me [City]" pattern first
+        dest_match = re.search(r'show\s+me\s+([A-Za-z\s]+?)(?:\s+for|\s+with|\s*[,.]|\s*$)', text, re.IGNORECASE)
+        if dest_match:
+            dest = dest_match.group(1).strip()
+            dest = re.sub(r'[^\w\s]', '', dest)
+            destination = ' '.join(word.capitalize() for word in dest.split())
+
+    # Pattern 4: "[City] for X days" or "[City] trip"
+    if not destination:
+        dest_match = re.search(r'(?:^|\s)([A-Za-z\s]+?)\s+(?:for|trip)', text, re.IGNORECASE)
+        if dest_match:
+            dest = dest_match.group(1).strip()
+            dest = re.sub(r'[^\w\s]', '', dest)
+            # Filter out common non-city words
+            words = dest.lower().split()
+            filtered_words = [w for w in words if w not in ['plan', 'show', 'me', 'want', 'need', 'like', 'i', 'a', 'the']]
+            if filtered_words:
+                destination = ' '.join(word.capitalize() for word in filtered_words)
 
     # Extract preferences by keyword matching
     preferences = []

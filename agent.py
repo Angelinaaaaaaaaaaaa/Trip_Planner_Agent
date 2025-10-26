@@ -35,7 +35,7 @@ except ImportError:
 from intent import parse_intent
 from planner import build_itinerary
 from exporters import itinerary_to_markdown, itinerary_to_ics
-from data_sources import get_supported_cities
+from data_sources import get_supported_cities, is_city_supported
 
 # Load environment variables
 load_dotenv()
@@ -111,6 +111,16 @@ async def on_chat(ctx: Context, sender: str, msg: ChatMessage):
             "- 'Plan a trip to Tokyo'\n"
             "- 'I want to visit Barcelona for 2 days'\n\n"
             f"Supported cities: {', '.join(get_supported_cities())}"
+        )
+        await ctx.send(sender, make_text_msg(error_msg))
+        return
+
+    # Validate that the destination is supported (with normalized matching)
+    if not is_city_supported(intent.destination):
+        error_msg = (
+            f"I found '{intent.destination}' in your request, but I don't have data for that city yet.\n\n"
+            f"Supported cities: {', '.join(get_supported_cities())}\n\n"
+            "Please try one of these cities!"
         )
         await ctx.send(sender, make_text_msg(error_msg))
         return

@@ -108,3 +108,14 @@ trip_*.ics
 plan_test.json
 INSTALLATION_COMPLETE.txt
 web_app/backend/trip_*.ics
+
+# Documentation/processing files (user-requested)
+DAY_RANGE_FEATURE.md
+IMPLEMENTATION_SUMMARY.md
+BUG_FIX_SUMMARY.md
+CITY_NAME_FIX.md
+CHECKLIST.md
+COMPLETE_SUMMARY.md
+WEB_DEPLOYMENT.md
+WEB_APP_SUMMARY.md
+INTENT_PARSING_FIX.md

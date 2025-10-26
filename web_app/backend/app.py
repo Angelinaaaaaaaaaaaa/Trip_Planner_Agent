@@ -15,8 +15,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 from intent import parse_intent
 from planner import build_itinerary
+
 from exporters import itinerary_to_markdown, itinerary_to_ics_string
-from data_sources import get_supported_cities
+from data_sources import get_supported_cities, is_city_supported
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend access
@@ -82,6 +83,14 @@ def plan_trip():
             return jsonify({
                 'success': False,
                 'error': 'Could not identify destination. Please specify a city.',
+                'supported_cities': get_supported_cities()
+            }), 400
+
+        # Validate that the destination is supported (with normalized matching)
+        if not is_city_supported(intent.destination):
+            return jsonify({
+                'success': False,
+                'error': f'City "{intent.destination}" is not supported yet. Please choose from the available cities.',
                 'supported_cities': get_supported_cities()
             }), 400
 

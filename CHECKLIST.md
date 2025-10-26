@@ -8,6 +8,13 @@
 - ✅ Tested with 3, 5, 20, 100, 1000 days
 - ✅ All tests verify exact day counts
 
+### Goal 7: City name matching improvements (NEW)
+- ✅ Case-insensitive city matching (tokyo, TOKYO, Tokyo all work)
+- ✅ Handles punctuation (tokyo., new york! work)
+- ✅ Handles extra whitespace (  paris   works)
+- ✅ Multi-word cities supported (new york, New York, NEW YORK)
+- ✅ All 16 test cases pass
+
 ### Goal 2: Support 1000-day trips without OOM/timeout
 - ✅ 1000-day trip completes in < 0.001s (target was < 3s)
 - ✅ Memory usage: ~50KB vs ~2MB (40x improvement)
@@ -44,10 +51,12 @@
 - ✅ `planner.py` - Refactored with day range support
 - ✅ `planner_config.py` - Configuration system (NEW)
 - ✅ `exporters.py` - Updated for day ranges
+- ✅ `data_sources.py` - Case-insensitive city matching (NEW)
 - ✅ Backward compatibility maintained
 
 ### Tests
 - ✅ `test_planner.py` - 21 unit tests, all passing
+- ✅ `test_city_names.py` - City name normalization tests (NEW)
 - ✅ Day count tests (3, 5, 20, 100, 1000 days)
 - ✅ Day range tests
 - ✅ Performance tests (< 3s for 1000 days)
@@ -60,6 +69,8 @@
 ### Documentation
 - ✅ `DAY_RANGE_FEATURE.md` - Complete feature documentation
 - ✅ `IMPLEMENTATION_SUMMARY.md` - Technical summary
+- ✅ `BUG_FIX_SUMMARY.md` - POI distribution bug fix
+- ✅ `CITY_NAME_FIX.md` - City name normalization fix (NEW)
 - ✅ `README.md` - Updated with day range section
 - ✅ `CHECKLIST.md` - This file
 - ✅ Inline code comments and docstrings
