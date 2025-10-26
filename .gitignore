@@ -1,5 +1,6 @@
 # Python
 __pycache__/
+*.pyc
 *.py[cod]
 *$py.class
 *.so
@@ -119,3 +120,6 @@ COMPLETE_SUMMARY.md
 WEB_DEPLOYMENT.md
 WEB_APP_SUMMARY.md
 INTENT_PARSING_FIX.md
+
+# Claude
+.claude/
