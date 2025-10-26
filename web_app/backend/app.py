@@ -8,11 +8,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import sys
 import os
-<<<<<<< HEAD
 from dotenv import load_dotenv
-=======
-from io import BytesIO
->>>>>>> 7d22efa600a9ab817082ee4054ad382b0c91e480
 
 # Resolve repository root and ensure project modules are importable
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
@@ -25,16 +21,10 @@ if os.path.exists(env_path):
 
 from intent import parse_intent
 from planner import build_itinerary
-<<<<<<< HEAD
 from llm_planner import create_intelligent_itinerary
 from llm_config import is_llm_available
 from exporters import itinerary_to_markdown, itinerary_to_ics
 from data_sources import get_supported_cities
-=======
-
-from exporters import itinerary_to_markdown, itinerary_to_ics_string
-from data_sources import get_supported_cities, is_city_supported
->>>>>>> 7d22efa600a9ab817082ee4054ad382b0c91e480
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend access
