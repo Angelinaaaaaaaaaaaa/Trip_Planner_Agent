@@ -4,7 +4,10 @@
       "Bash(source .venv/bin/activate)",
       "Bash(venv\\Scripts\\activate)",
       "Bash(python -c:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
