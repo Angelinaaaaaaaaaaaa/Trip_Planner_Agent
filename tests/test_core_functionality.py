@@ -7,8 +7,8 @@ This verifies all the fixes work correctly.
 import sys
 import os
 
-# Add current directory to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add parent directory to path so we can import project modules
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 print("=" * 70)
 print(" " * 15 + "CORE FUNCTIONALITY TEST")

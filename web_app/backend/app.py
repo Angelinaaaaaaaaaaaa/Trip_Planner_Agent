@@ -24,7 +24,11 @@ from intent import parse_intent
 from planner import build_itinerary
 from llm_planner import create_intelligent_itinerary
 from llm_config import is_llm_available
+<<<<<<< HEAD
 from exporters import itinerary_to_markdown, itinerary_to_ics, itinerary_to_ics_string
+=======
+from exporters import itinerary_to_markdown, itinerary_to_ics
+>>>>>>> 611b703 (fix: Import is_city_supported from data_sources for city validation)
 from data_sources import get_supported_cities, is_city_supported
 
 app = Flask(__name__)
