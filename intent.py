@@ -158,14 +158,18 @@ def _parse_intent_simple(text: str) -> TripIntent:
             dest = re.sub(r'[^\w\s]', '', dest)
             destination = ' '.join(word.capitalize() for word in dest.split())
 
-    # Pattern 3: "Show me [City]" or "[City] for X days" or "[City] trip"
+    # Pattern 3: "Show me [City]" - capture only city name, filter out descriptive words
     if not destination:
         # Try "show me [City]" pattern first
         dest_match = re.search(r'show\s+me\s+([A-Za-z\s]+?)(?:\s+for|\s+with|\s*[,.]|\s*$)', text, re.IGNORECASE)
         if dest_match:
             dest = dest_match.group(1).strip()
             dest = re.sub(r'[^\w\s]', '', dest)
-            destination = ' '.join(word.capitalize() for word in dest.split())
+            # Filter out descriptive words like "highlights", "attractions", etc.
+            words = dest.split()
+            filtered_words = [w for w in words if w.lower() not in ['highlights', 'attractions', 'sights', 'things', 'places', 'spots']]
+            if filtered_words:
+                destination = ' '.join(word.capitalize() for word in filtered_words)
 
     # Pattern 4: "[City] for X days" or "[City] trip"
     if not destination:
@@ -178,6 +182,13 @@ def _parse_intent_simple(text: str) -> TripIntent:
             filtered_words = [w for w in words if w not in ['plan', 'show', 'me', 'want', 'need', 'like', 'i', 'a', 'the']]
             if filtered_words:
                 destination = ' '.join(word.capitalize() for word in filtered_words)
+
+    # Pattern 5: Fallback - if input is very short (1-3 words), treat as city name
+    # This handles bare city names like "Tokyo", "tokyo.", "New York"
+    if not destination and len(text.strip().split()) <= 3:
+        cleaned = re.sub(r'[^\w\s]', '', text).strip()
+        if cleaned:
+            destination = ' '.join(word.capitalize() for word in cleaned.split())
 
     # Extract preferences by keyword matching
     preferences = []
