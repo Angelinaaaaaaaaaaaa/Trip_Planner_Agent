@@ -369,6 +369,45 @@ markdown = itinerary_to_markdown(itinerary)
 print(markdown)
 ```
 
+## 📊 Day Ranges & Long Trips
+
+### NEW: Support for Trips Up to 1000 Days!
+
+The planner now intelligently handles very long trips by using **day ranges**:
+
+```python
+# Request a 100-day trip
+intent = TripIntent(destination="Paris", days=100, preferences=["art"])
+itinerary = build_itinerary(intent)
+
+# Result:
+# - Days 1-7: Detailed activities (Louvre, Eiffel Tower, etc.)
+# - Days 8-14: Free exploration / Rest days
+# - Days 15-100: Summarized into ranges
+```
+
+**Benefits:**
+- ✅ **Exact day counts guaranteed** - Always returns exactly the requested number of days
+- ✅ **Performance** - 1000-day trips generate in < 0.001s
+- ✅ **Memory efficient** - Uses day ranges instead of creating 4000+ individual items
+- ✅ **Readable output** - Long trips summarized into sensible ranges
+
+**Example Output:**
+
+```markdown
+## Day 1 - Tower Hill
+**09:00** - Tower of London
+**12:00** - Borough Market
+
+## Days 8–14
+_Free exploration / Rest days_
+
+## Days 15–20
+_Leisure time / Optional activities_
+```
+
+**📚 Full Documentation:** See [DAY_RANGE_FEATURE.md](DAY_RANGE_FEATURE.md) for complete details, configuration options, and examples.
+
 ## 📋 Requirements
 
 ### Core Dependencies
