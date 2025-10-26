@@ -24,7 +24,7 @@ class TestPlannerDayCount(unittest.TestCase):
         self.assertEqual(len(covered_days), 3)
 
     def test_medium_trip_not_enough_pois(self):
-        """Test 5-day trip to New York (has 8 POIs - not quite enough)."""
+        """Test 5-day trip to New York (has 8 POIs - distributes across all 5 days)."""
         intent = TripIntent(destination="New York", days=5, preferences=[])
         itinerary = build_itinerary(intent)
 
@@ -33,9 +33,11 @@ class TestPlannerDayCount(unittest.TestCase):
         self.assertEqual(covered_days, {1, 2, 3, 4, 5})
         self.assertEqual(len(covered_days), 5)
 
-        # Should have day ranges for uncovered days
-        if len(itinerary.items) < 20:  # If not all days have 4 activities
-            self.assertGreater(len(itinerary.day_ranges), 0)
+        # With 8 POIs for 5 days, all days should have activities
+        # Round-robin distribution: days 1-3 get 2 activities, days 4-5 get 1 each
+        self.assertEqual(len(itinerary.items), 8)
+        # No day ranges needed since all days have activities
+        self.assertEqual(len(itinerary.day_ranges), 0)
 
     def test_long_trip_sparse_pois(self):
         """Test 20-day trip to London (has 7 POIs - very sparse)."""

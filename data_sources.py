@@ -2,6 +2,7 @@
 # Built-in POI database for popular destinations
 # No external APIs required - works immediately!
 
+import re
 from typing import List, Dict
 
 # Comprehensive POI database for 6+ popular cities
@@ -362,22 +363,64 @@ DESTINATIONS: Dict[str, Dict[str, List[dict]]] = {
 }
 
 
+def _normalize_city_name(city: str) -> str:
+    """
+    Normalize city name for case-insensitive matching.
+
+    Handles:
+    - Case differences (TOKYO, tokyo, Tokyo)
+    - Punctuation (tokyo., new york!)
+    - Extra whitespace
+
+    Args:
+        city: Raw city name from user input
+
+    Returns:
+        Normalized city name in Title Case
+    """
+    if not city:
+        return ""
+
+    # Remove punctuation (except spaces and hyphens for multi-word cities)
+    city = re.sub(r'[^\w\s-]', '', city)
+
+    # Strip extra whitespace and convert to title case
+    city = city.strip().title()
+
+    return city
+
+
 def fetch_pois(city: str, preferences: List[str] = None) -> List[dict]:
     """
     Fetch POIs for a given city from the built-in database.
 
+    City matching is case-insensitive and handles punctuation.
+    Examples: "tokyo", "TOKYO", "Tokyo.", "new york" all work.
+
     Args:
-        city: Destination city name
+        city: Destination city name (case-insensitive, punctuation-tolerant)
         preferences: Optional list of preference tags to filter/prioritize
 
     Returns:
         List of POI dictionaries with name, area, tags, opening hours, and URL
     """
-    city_data = DESTINATIONS.get(city, {})
+    # Normalize the input city name
+    normalized_city = _normalize_city_name(city)
+
+    # Try exact match first (for backward compatibility)
+    city_data = DESTINATIONS.get(normalized_city, {})
+
+    # If not found, try case-insensitive search
+    if not city_data:
+        for dest_city in DESTINATIONS.keys():
+            if _normalize_city_name(dest_city) == normalized_city:
+                city_data = DESTINATIONS[dest_city]
+                break
+
     pois = city_data.get("pois", [])
 
     if not pois:
-        # Return a helpful message if city not found
+        # Return empty list if city not found
         return []
 
     return pois
@@ -386,3 +429,21 @@ def fetch_pois(city: str, preferences: List[str] = None) -> List[dict]:
 def get_supported_cities() -> List[str]:
     """Return list of cities with built-in POI data."""
     return list(DESTINATIONS.keys())
+
+
+def is_city_supported(city: str) -> bool:
+    """
+    Check if a city is supported (case-insensitive, punctuation-tolerant).
+
+    Args:
+        city: City name to check
+
+    Returns:
+        True if city has POI data, False otherwise
+    """
+    if not city:
+        return False
+
+    # Try to fetch POIs - if we get any, the city is supported
+    pois = fetch_pois(city)
+    return len(pois) > 0

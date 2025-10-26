@@ -36,7 +36,7 @@ from intent import parse_intent
 from planner import build_itinerary
 from llm_planner import create_intelligent_itinerary
 from exporters import itinerary_to_markdown, itinerary_to_ics
-from data_sources import get_supported_cities
+from data_sources import get_supported_cities, is_city_supported
 
 # Load environment variables
 load_dotenv()
@@ -113,6 +113,16 @@ async def on_chat(ctx: Context, sender: str, msg: ChatMessage):
             "- 'I want to visit Mumbai for 5 days'\n"
             "- 'Create an itinerary for Reykjavik'\n\n"
             "💡 I can plan trips to ANY city worldwide!"
+        )
+        await ctx.send(sender, make_text_msg(error_msg))
+        return
+
+    # Validate that the destination is supported (with normalized matching)
+    if not is_city_supported(intent.destination):
+        error_msg = (
+            f"I found '{intent.destination}' in your request, but I don't have data for that city yet.\n\n"
+            f"Supported cities: {', '.join(get_supported_cities())}\n\n"
+            "Please try one of these cities!"
         )
         await ctx.send(sender, make_text_msg(error_msg))
         return

@@ -226,3 +226,119 @@ def itinerary_to_ics(itinerary: Itinerary, start_date: datetime = None, output_d
     except Exception as e:
         print(f"Error creating ICS file: {e}")
         return ""
+
+
+def itinerary_to_ics_string(itinerary: Itinerary, start_date: datetime = None) -> tuple[str, str]:
+    """
+    Export itinerary as ICS calendar content without saving to disk.
+    Returns the ICS content as a string and the suggested filename.
+
+    Args:
+        itinerary: Complete trip itinerary with items and ranges
+        start_date: When the trip starts (defaults to tomorrow at 9 AM)
+
+    Returns:
+        Tuple of (ics_content_string, filename)
+    """
+    if start_date is None:
+        # Default to tomorrow at 9 AM in local timezone
+        start_date = datetime.now(tzlocal()) + timedelta(days=1)
+        start_date = start_date.replace(hour=9, minute=0, second=0, microsecond=0)
+
+    # Group activities by day
+    days_dict: Dict[int, List[ItineraryItem]] = {}
+    for item in itinerary.items:
+        days_dict.setdefault(item.day, []).append(item)
+
+    def format_ics_datetime(dt: datetime) -> str:
+        """Format datetime for ICS file."""
+        return dt.strftime("%Y%m%dT%H%M%S")
+
+    def format_ics_date(dt: datetime) -> str:
+        """Format date for ICS all-day events."""
+        return dt.strftime("%Y%m%d")
+
+    # Build ICS content
+    ics_lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Trip Planner Agent//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        f"X-WR-CALNAME:{itinerary.destination} Trip",
+        "X-WR-TIMEZONE:UTC",
+    ]
+
+    # Add specific activities as timed events
+    for day_num in range(1, itinerary.days + 1):
+        day_items = days_dict.get(day_num, [])
+        if not day_items:
+            continue
+
+        # Sort items by time
+        day_items = sorted(day_items, key=lambda x: x.time)
+
+        for item in day_items:
+            # Parse time
+            hour, minute = map(int, item.time.split(':'))
+
+            # Calculate event start time
+            event_date = start_date + timedelta(days=day_num - 1)
+            event_start = event_date.replace(hour=hour, minute=minute)
+
+            # Event lasts 2 hours (adjustable)
+            event_end = event_start + timedelta(hours=2)
+
+            # Build description with tags and area
+            description = f"Area: {item.area}"
+            if item.tags:
+                description += f"\\nCategories: {', '.join(item.tags)}"
+            if item.url:
+                description += f"\\nMap: {item.url}"
+
+            # Create event
+            ics_lines.extend([
+                "BEGIN:VEVENT",
+                f"DTSTART:{format_ics_datetime(event_start)}",
+                f"DTEND:{format_ics_datetime(event_end)}",
+                f"SUMMARY:{item.name}",
+                f"DESCRIPTION:{description}",
+                f"LOCATION:{item.area}, {itinerary.destination}",
+                f"UID:{itinerary.destination}-day{day_num}-{item.time}@tripplanner",
+                "STATUS:CONFIRMED",
+                "END:VEVENT",
+            ])
+
+    # Add day ranges as all-day events
+    for day_range in itinerary.day_ranges:
+        # Calculate date range
+        range_start_date = start_date + timedelta(days=day_range.start_day - 1)
+        # ICS all-day events: end date is exclusive, so add 1 extra day
+        range_end_date = start_date + timedelta(days=day_range.end_day)
+
+        # Create all-day event for the range
+        summary = f"{day_range.description}"
+        if day_range.start_day != day_range.end_day:
+            num_days = day_range.end_day - day_range.start_day + 1
+            summary = f"{day_range.description} ({num_days} days)"
+
+        ics_lines.extend([
+            "BEGIN:VEVENT",
+            f"DTSTART;VALUE=DATE:{format_ics_date(range_start_date)}",
+            f"DTEND;VALUE=DATE:{format_ics_date(range_end_date)}",
+            f"SUMMARY:{summary}",
+            f"DESCRIPTION:{day_range.description}",
+            f"LOCATION:{itinerary.destination}",
+            f"UID:{itinerary.destination}-range{day_range.start_day}-{day_range.end_day}@tripplanner",
+            "STATUS:CONFIRMED",
+            "TRANSP:TRANSPARENT",  # Show as "free" time
+            "END:VEVENT",
+        ])
+
+    ics_lines.append("END:VCALENDAR")
+
+    # Generate filename
+    filename = f"trip_{itinerary.destination.lower().replace(' ', '_')}_{itinerary.days}days.ics"
+
+    # Return content and filename
+    return '\n'.join(ics_lines), filename

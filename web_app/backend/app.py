@@ -8,7 +8,11 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import sys
 import os
+<<<<<<< HEAD
 from dotenv import load_dotenv
+=======
+from io import BytesIO
+>>>>>>> 7d22efa600a9ab817082ee4054ad382b0c91e480
 
 # Resolve repository root and ensure project modules are importable
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
@@ -21,10 +25,16 @@ if os.path.exists(env_path):
 
 from intent import parse_intent
 from planner import build_itinerary
+<<<<<<< HEAD
 from llm_planner import create_intelligent_itinerary
 from llm_config import is_llm_available
 from exporters import itinerary_to_markdown, itinerary_to_ics
 from data_sources import get_supported_cities
+=======
+
+from exporters import itinerary_to_markdown, itinerary_to_ics_string
+from data_sources import get_supported_cities, is_city_supported
+>>>>>>> 7d22efa600a9ab817082ee4054ad382b0c91e480
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend access
@@ -97,6 +107,14 @@ def plan_trip():
                 'error': 'Could not identify destination. Please specify a city.',
                 'llm_available': is_llm_available(),
                 'message': 'You can ask for ANY city worldwide!' if is_llm_available() else f'Please choose from: {", ".join(get_supported_cities())}'
+            }), 400
+
+        # Validate that the destination is supported (with normalized matching)
+        if not is_city_supported(intent.destination):
+            return jsonify({
+                'success': False,
+                'error': f'City "{intent.destination}" is not supported yet. Please choose from the available cities.',
+                'supported_cities': get_supported_cities()
             }), 400
 
         # Default to 3 days if not specified
@@ -172,6 +190,7 @@ def plan_trip():
 def download_calendar(itinerary_id):
     """
     Download calendar file for a specific itinerary.
+    Generates the ICS file in memory without saving to disk.
 
     Parameters:
         itinerary_id: UUID of the itinerary
@@ -185,22 +204,25 @@ def download_calendar(itinerary_id):
 
         itinerary = recent_itineraries[itinerary_id]
 
-        # Generate ICS file in the backend directory
-        backend_dir = os.path.dirname(os.path.abspath(__file__))
-        ics_path = itinerary_to_ics(itinerary, output_dir=backend_dir)
+        # Generate ICS content in memory (no file saved to disk!)
+        ics_content, filename = itinerary_to_ics_string(itinerary)
 
-        if not ics_path or not os.path.exists(ics_path):
+        if not ics_content:
             return jsonify({
                 'success': False,
                 'error': 'Failed to generate calendar file'
             }), 500
 
-        # Send file for download
+        # Convert string to bytes and create in-memory file
+        ics_bytes = BytesIO(ics_content.encode('utf-8'))
+        ics_bytes.seek(0)
+
+        # Send file directly from memory
         return send_file(
-            ics_path,
+            ics_bytes,
             mimetype='text/calendar',
             as_attachment=True,
-            download_name=f'{itinerary.destination.lower()}_trip.ics'
+            download_name=filename
         )
 
     except Exception as e:
