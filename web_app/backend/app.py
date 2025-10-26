@@ -6,6 +6,7 @@ Provides REST API endpoints for the web frontend
 
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
+from io import BytesIO
 import sys
 import os
 from dotenv import load_dotenv
@@ -23,8 +24,8 @@ from intent import parse_intent
 from planner import build_itinerary
 from llm_planner import create_intelligent_itinerary
 from llm_config import is_llm_available
-from exporters import itinerary_to_markdown, itinerary_to_ics
-from data_sources import get_supported_cities
+from exporters import itinerary_to_markdown, itinerary_to_ics, itinerary_to_ics_string
+from data_sources import get_supported_cities, is_city_supported
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend access
@@ -99,22 +100,25 @@ def plan_trip():
                 'message': 'You can ask for ANY city worldwide!' if is_llm_available() else f'Please choose from: {", ".join(get_supported_cities())}'
             }), 400
 
-        # Validate that the destination is supported (with normalized matching)
-        if not is_city_supported(intent.destination):
-            return jsonify({
-                'success': False,
-                'error': f'City "{intent.destination}" is not supported yet. Please choose from the available cities.',
-                'supported_cities': get_supported_cities()
-            }), 400
-
         # Default to 3 days if not specified
         if not intent.days:
             intent.days = 3
 
         # Build itinerary using LLM if available, fallback to static
         if is_llm_available():
+            # LLM mode - can plan trips to ANY city worldwide
             itinerary = create_intelligent_itinerary(intent, use_llm=True)
         else:
+            # Static mode - validate that the destination is in static database
+            if not is_city_supported(intent.destination):
+                return jsonify({
+                    'success': False,
+                    'error': f'City "{intent.destination}" is not supported yet. Please choose from the available cities.',
+                    'supported_cities': get_supported_cities(),
+                    'llm_available': False,
+                    'message': f'To enable planning for ANY city, add ANTHROPIC_API_KEY to .env file'
+                }), 400
+
             itinerary = build_itinerary(intent)
 
         # Convert to markdown
