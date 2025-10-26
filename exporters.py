@@ -95,7 +95,7 @@ def itinerary_to_markdown(itinerary: Itinerary) -> str:
     return "\n".join(lines)
 
 
-def itinerary_to_ics(itinerary: Itinerary, start_date: datetime = None) -> str:
+def itinerary_to_ics(itinerary: Itinerary, start_date: datetime = None, output_dir: str = None) -> str:
     """
     Export itinerary as ICS calendar file that can be imported to Google Calendar,
     Apple Calendar, Outlook, etc.
@@ -106,6 +106,7 @@ def itinerary_to_ics(itinerary: Itinerary, start_date: datetime = None) -> str:
     Args:
         itinerary: Complete trip itinerary with items and ranges
         start_date: When the trip starts (defaults to tomorrow at 9 AM)
+        output_dir: Directory to save the file (defaults to current directory)
 
     Returns:
         Path to the created .ics file
@@ -210,10 +211,18 @@ def itinerary_to_ics(itinerary: Itinerary, start_date: datetime = None) -> str:
     # Write to file
     filename = f"trip_{itinerary.destination.lower().replace(' ', '_')}_{itinerary.days}days.ics"
 
+    # Use output_dir if provided, otherwise use current directory
+    import os
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+        filepath = os.path.join(output_dir, filename)
+    else:
+        filepath = filename
+
     try:
-        with open(filename, 'w', encoding='utf-8') as f:
+        with open(filepath, 'w', encoding='utf-8') as f:
             f.write('\n'.join(ics_lines))
-        return filename
+        return filepath
     except Exception as e:
         print(f"Error creating ICS file: {e}")
         return ""

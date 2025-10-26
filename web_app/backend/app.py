@@ -154,8 +154,9 @@ def download_calendar(itinerary_id):
 
         itinerary = recent_itineraries[itinerary_id]
 
-        # Generate ICS file
-        ics_path = itinerary_to_ics(itinerary)
+        # Generate ICS file in the backend directory
+        backend_dir = os.path.dirname(os.path.abspath(__file__))
+        ics_path = itinerary_to_ics(itinerary, output_dir=backend_dir)
 
         if not ics_path or not os.path.exists(ics_path):
             return jsonify({

@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(source .venv/bin/activate)",
-      "Bash(python -c:*)"
+      "Bash(venv\\Scripts\\activate)",
+      "Bash(python -c:*)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []
