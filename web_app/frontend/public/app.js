@@ -18,6 +18,9 @@ const itineraryDisplay = document.getElementById('itinerary-display');
 const downloadButton = document.getElementById('download-button');
 const examplesGrid = document.getElementById('examples-grid');
 const citiesList = document.getElementById('cities-list');
+const aiStatus = document.getElementById('ai-status');
+const statusMessage = document.getElementById('status-message');
+const aiBadge = document.getElementById('ai-badge');
 
 // Detect backend port on startup
 async function detectBackendPort() {
@@ -90,12 +93,45 @@ async function loadCities() {
         const response = await fetch(`${API_BASE_URL}/cities`);
         const data = await response.json();
 
-        citiesList.innerHTML = data.cities.map(city =>
-            `<span class="city-tag">${city}</span>`
-        ).join('');
+        // Update AI status
+        updateAiStatus(data);
+
+        // Display enhanced cities
+        if (data.static_cities && data.static_cities.length > 0) {
+            citiesList.innerHTML = data.static_cities.map(city =>
+                `<span class="city-tag enhanced">${city}</span>`
+            ).join('');
+        } else {
+            citiesList.innerHTML = '<span class="city-tag">Loading...</span>';
+        }
     } catch (error) {
         console.error('Error loading cities:', error);
-        citiesList.innerHTML = 'Error loading cities';
+        citiesList.innerHTML = '<span class="city-tag error">Error loading cities</span>';
+        updateAiStatus({ llm_available: false, message: 'Connection error' });
+    }
+}
+
+// Update AI Status
+function updateAiStatus(data) {
+    const isLlmAvailable = data.llm_available;
+    const statusIcon = aiStatus.querySelector('.status-icon');
+    
+    if (isLlmAvailable) {
+        statusMessage.innerHTML = `
+            <strong>✅ Global AI Planning ENABLED</strong><br>
+            <span>Can plan trips to ANY city worldwide!</span>
+        `;
+        statusIcon.textContent = '🌍';
+        aiStatus.classList.add('ai-enabled');
+        aiStatus.classList.remove('ai-disabled');
+    } else {
+        statusMessage.innerHTML = `
+            <strong>⚠️ Limited to Enhanced Cities</strong><br>
+            <span>AI planning unavailable - using static database</span>
+        `;
+        statusIcon.textContent = '📍';
+        aiStatus.classList.add('ai-disabled');
+        aiStatus.classList.remove('ai-enabled');
     }
 }
 
@@ -138,6 +174,14 @@ async function handlePlanTrip() {
 
         if (data.success) {
             currentItineraryId = data.itinerary_id;
+            
+            // Show AI badge if LLM was used
+            if (data.llm_powered) {
+                aiBadge.style.display = 'flex';
+            } else {
+                aiBadge.style.display = 'none';
+            }
+            
             displayResults(data);
         } else {
             throw new Error(data.error || 'Unknown error');
@@ -206,8 +250,8 @@ function displayItinerary(itinerary) {
     // Sort days
     const sortedDays = Object.keys(dayGroups).sort((a, b) => a - b);
 
-    // Generate HTML
-    itineraryDisplay.innerHTML = sortedDays.map(day => {
+    // Generate day sections HTML
+    let daysSectionsHTML = sortedDays.map(day => {
         const activities = dayGroups[day];
         const dayName = getDayName(parseInt(day), activities[0].area);
 
@@ -240,6 +284,28 @@ function displayItinerary(itinerary) {
             </div>
         `;
     }).join('');
+
+    // Add day ranges if any
+    let dayRangesHTML = '';
+    if (itinerary.day_ranges && itinerary.day_ranges.length > 0) {
+        dayRangesHTML = itinerary.day_ranges.map(range => `
+            <div class="day-range-section">
+                <div class="day-range-header">
+                    <span class="range-indicator">📅</span>
+                    <span class="range-title">${range.start_day === range.end_day ? 
+                        `Day ${range.start_day}` : 
+                        `Days ${range.start_day}–${range.end_day}`}</span>
+                    <span class="range-type">${range.activity_type.replace('_', ' ')}</span>
+                </div>
+                <div class="day-range-description">
+                    ${escapeHtml(range.description)}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Combine all HTML
+    itineraryDisplay.innerHTML = daysSectionsHTML + dayRangesHTML;
 }
 
 // Get Day Name

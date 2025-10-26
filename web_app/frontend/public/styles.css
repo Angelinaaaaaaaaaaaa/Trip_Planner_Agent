@@ -211,7 +211,78 @@ textarea::placeholder {
     font-style: italic;
 }
 
-/* Cities Section */
+/* AI Status Section */
+.ai-status-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.ai-status {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--surface-light);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.ai-status.ai-enabled {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.ai-status.ai-disabled {
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.status-icon {
+    font-size: 2rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+.status-text {
+    flex: 1;
+}
+
+.status-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.status-message {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.global-notice {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.city-tag.enhanced {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    font-weight: 500;
+}
+
+.city-tag.error {
+    background: var(--error);
+    color: white;
+}
 .cities-section {
     margin-top: 20px;
     padding-top: 20px;
@@ -259,6 +330,35 @@ textarea::placeholder {
 
 .results-header h2 {
     color: var(--text-primary);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.ai-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 3px 10px rgba(99, 102, 241, 0.3);
+}
+
+.badge-icon {
+    font-size: 1.1rem;
+}
+
+.badge-text {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Intent Display */
@@ -514,4 +614,43 @@ textarea::placeholder {
 .results-section,
 .error-section {
     animation: fadeIn 0.5s ease;
+}
+
+/* Day Range Sections */
+.day-range-section {
+    background: var(--surface-light);
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid #f59e0b;
+    margin-top: 15px;
+}
+
+.day-range-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.range-indicator {
+    font-size: 1.5rem;
+}
+
+.range-type {
+    background: #f59e0b;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+    margin-left: auto;
+}
+
+.day-range-description {
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.5;
 }

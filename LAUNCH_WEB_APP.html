@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Trip Planner - Launch</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            margin: 0;
+            padding: 40px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .launch-container {
+            background: #1e293b;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+        }
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid #10b981;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .launch-button {
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            color: white;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .launch-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+        .features {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+    <div class="launch-container">
+        <div class="logo">🌍 AI Trip Planner</div>
+        <div class="subtitle">Global AI-Powered Travel Planning</div>
+        
+        <div class="status">
+            <strong>✅ Server Running on http://localhost:5000</strong><br>
+            🤖 Claude AI Integration: ENABLED<br>
+            🌍 Global Coverage: ANY city worldwide!
+        </div>
+        
+        <a href="http://localhost:5000" class="launch-button" target="_blank">
+            🚀 Launch Trip Planner
+        </a>
+        
+        <div class="features">
+            <div class="feature">✨ <strong>AI-Powered Planning:</strong> Intelligent itineraries for any city</div>
+            <div class="feature">🗺️ <strong>Global Coverage:</strong> Plan trips anywhere in the world</div>
+            <div class="feature">🎯 <strong>Smart Scheduling:</strong> Geographic clustering & optimal timing</div>
+            <div class="feature">📅 <strong>Calendar Export:</strong> Download .ics files for your calendar</div>
+            <div class="feature">💬 <strong>Natural Language:</strong> Just describe your dream trip</div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-redirect after 3 seconds if user doesn't click
+        setTimeout(() => {
+            console.log("Auto-launching Trip Planner...");
+            window.open('http://localhost:5000', '_blank');
+        }, 3000);
+    </script>
+</body>
+</html>

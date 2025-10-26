@@ -27,6 +27,30 @@ PREFERENCE_KEYWORDS = [
 ]
 
 
+def _normalize_destination(city: Optional[str]) -> Optional[str]:
+    """Normalize common city abbreviations and variants to canonical names."""
+    if not city:
+        return city
+    mapping = {
+        "sf": "San Francisco",
+        "s.f.": "San Francisco",
+        "san fran": "San Francisco",
+        "nyc": "New York",
+        "new york city": "New York",
+        "la": "Los Angeles",
+        "l.a.": "Los Angeles",
+        "vegas": "Las Vegas",
+        "hk": "Hong Kong",
+        "h.k.": "Hong Kong",
+        "ho chi minh": "Ho Chi Minh City",
+        "saigon": "Ho Chi Minh City",
+        "cdmx": "Mexico City",
+        "rio": "Rio de Janeiro",
+    }
+    key = city.strip().lower()
+    return mapping.get(key, city)
+
+
 def parse_intent(text: str) -> TripIntent:
     """
     Parse user's natural language input using Claude AI.
@@ -84,7 +108,7 @@ PREFERENCES: family, kids
 Now parse the user's request."""
 
         message = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-haiku-20240307",
             max_tokens=300,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -113,6 +137,9 @@ Now parse the user's request."""
                 prefs_str = line.split(':', 1)[1].strip()
                 if prefs_str != 'NONE':
                     preferences = [p.strip() for p in prefs_str.split(',')]
+
+        # Normalize destination (e.g., 'SF' -> 'San Francisco')
+        destination = _normalize_destination(destination)
 
         return TripIntent(destination=destination, days=days, preferences=preferences)
 
@@ -145,11 +172,21 @@ def _parse_intent_simple(text: str) -> TripIntent:
         dest = dest_match.group(1).strip()
         # Capitalize properly
         destination = ' '.join(word.capitalize() for word in dest.split())
+    else:
+        # Handle simple one-word city names (e.g., "SF", "NYC")
+        tokens = re.findall(r'[A-Za-z]+', text)
+        if tokens:
+            # Take the last token as a guess when structure is minimal
+            guess = tokens[-1]
+            destination = ' '.join(word.capitalize() for word in guess.split())
 
     # Extract preferences by keyword matching
     preferences = []
     for keyword in PREFERENCE_KEYWORDS:
         if keyword in t:
             preferences.append(keyword)
+
+    # Normalize destination after basic parsing
+    destination = _normalize_destination(destination)
 
     return TripIntent(destination=destination, days=days, preferences=preferences)

@@ -34,6 +34,7 @@ except ImportError:
 
 from intent import parse_intent
 from planner import build_itinerary
+from llm_planner import create_intelligent_itinerary
 from exporters import itinerary_to_markdown, itinerary_to_ics
 from data_sources import get_supported_cities
 
@@ -92,9 +93,9 @@ async def on_chat(ctx: Context, sender: str, msg: ChatMessage):
     if not user_text:
         welcome_msg = (
             "Hi! I'm your AI Trip Planner powered by Claude.\n\n"
-            "Tell me about your trip and I'll create a personalized itinerary!\n\n"
-            "Example: 'Plan me a 3-day trip to Tokyo for food and culture'\n\n"
-            f"I currently support: {', '.join(get_supported_cities())}"
+            "I can plan trips to ANY city in the world using advanced AI reasoning!\n\n"
+            "Example: 'Plan me a 3-day trip to Prague for architecture and food'\n\n"
+            "✨ NEW: I'm no longer limited to specific cities - I can plan trips anywhere!"
         )
         await ctx.send(sender, make_text_msg(welcome_msg))
         return
@@ -108,9 +109,10 @@ async def on_chat(ctx: Context, sender: str, msg: ChatMessage):
         error_msg = (
             "I couldn't identify a destination in your request.\n\n"
             "Please include a city name, for example:\n"
-            "- 'Plan a trip to Tokyo'\n"
-            "- 'I want to visit Barcelona for 2 days'\n\n"
-            f"Supported cities: {', '.join(get_supported_cities())}"
+            "- 'Plan a trip to Prague'\n"
+            "- 'I want to visit Mumbai for 5 days'\n"
+            "- 'Create an itinerary for Reykjavik'\n\n"
+            "💡 I can plan trips to ANY city worldwide!"
         )
         await ctx.send(sender, make_text_msg(error_msg))
         return
@@ -120,12 +122,14 @@ async def on_chat(ctx: Context, sender: str, msg: ChatMessage):
         intent.days = 3
         ctx.logger.info(f"No duration specified, defaulting to {intent.days} days")
 
-    # Build itinerary
+    # Build itinerary using LLM-powered planner
     ctx.logger.info(
-        f"Building itinerary for {intent.destination}, "
+        f"Building AI-powered itinerary for {intent.destination}, "
         f"{intent.days} days, preferences: {intent.preferences}"
     )
-    itinerary = build_itinerary(intent)
+    
+    # Use the new intelligent planner that can handle any city
+    itinerary = create_intelligent_itinerary(intent, use_llm=True)
 
     # Format as markdown
     md = itinerary_to_markdown(itinerary)
@@ -161,7 +165,15 @@ async def startup(ctx: Context):
     ctx.logger.info(f"Agent address: {agent.address}")
     ctx.logger.info(f"Agent port: {AGENT_PORT}")
     ctx.logger.info(f"Chat Protocol enabled and manifest published")
-    ctx.logger.info(f"Supported cities: {', '.join(get_supported_cities())}")
+    ctx.logger.info(f"🌍 AI-Powered Planning: Can plan trips to ANY city worldwide!")
+    ctx.logger.info(f"📊 Static Database: {', '.join(get_supported_cities())} (enhanced with AI)")
+    
+    # Check if Anthropic API key is available
+    if os.getenv("ANTHROPIC_API_KEY"):
+        ctx.logger.info("✅ Claude AI integration: ENABLED")
+    else:
+        ctx.logger.warning("⚠️  Claude AI integration: DISABLED (no API key)")
+        ctx.logger.info("📝 Agent will use static planning only")
 
 
 if __name__ == "__main__":

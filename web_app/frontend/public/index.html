@@ -21,12 +21,12 @@
             <!-- Input Section -->
             <section class="input-section">
                 <h2>Plan Your Dream Trip</h2>
-                <p class="description">Tell me where you want to go, how long, and what you're interested in!</p>
+                <p class="description">✨ <strong>NEW:</strong> I can now plan trips to <strong>ANY city worldwide</strong> using advanced AI! Tell me where you want to go, how long, and what you're interested in!</p>
 
                 <div class="input-container">
                     <textarea
                         id="trip-input"
-                        placeholder='e.g., "Plan a 3-day trip to Tokyo for food and culture"'
+                        placeholder='e.g., "Plan a 4-day trip to Prague for architecture" or "Adventure trip to Reykjavik for 6 days"'
                         rows="3"
                     ></textarea>
                     <button id="plan-button" class="primary-button">
@@ -43,10 +43,21 @@
                     </div>
                 </div>
 
-                <!-- Supported Cities -->
-                <div class="cities-section">
-                    <p class="cities-title">Supported Cities:</p>
-                    <div id="cities-list" class="cities-list">Loading...</div>
+                <!-- AI Status & Cities -->
+                <div class="ai-status-section">
+                    <div id="ai-status" class="ai-status">
+                        <div class="status-icon">🤖</div>
+                        <div class="status-text">
+                            <div class="status-title">AI Planning Status</div>
+                            <div id="status-message" class="status-message">Checking AI capabilities...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="cities-section">
+                        <p class="cities-title">Enhanced Cities (Static + AI):</p>
+                        <div id="cities-list" class="cities-list">Loading...</div>
+                        <p class="global-notice">💡 <strong>Plus thousands more cities worldwide powered by AI!</strong></p>
+                    </div>
                 </div>
             </section>
 
@@ -54,9 +65,15 @@
             <section class="results-section" id="results-section" style="display: none;">
                 <div class="results-header">
                     <h2>Your Personalized Itinerary</h2>
-                    <button id="download-button" class="secondary-button">
-                        📅 Download Calendar
-                    </button>
+                    <div class="header-actions">
+                        <div id="ai-badge" class="ai-badge" style="display: none;">
+                            <span class="badge-icon">✨</span>
+                            <span class="badge-text">AI-Powered</span>
+                        </div>
+                        <button id="download-button" class="secondary-button">
+                            📅 Download Calendar
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Intent Display -->

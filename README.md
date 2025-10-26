@@ -11,7 +11,7 @@ A fully functional AI-powered trip planning agent built with **Fetch.ai's uAgent
 - **🗣️ Natural Language Planning** - Just tell the agent what you want: "Plan me a 3-day trip to Tokyo for food and culture"
 - **🤖 Claude-Powered Intelligence** - Advanced reasoning and personalized recommendations using Anthropic's Claude API
 - **📅 Smart Itinerary Generation** - Day-by-day schedules with time slots, activities, and geographic clustering
-- **🌍 Multi-City Support** - Built-in data for 6 popular destinations (Tokyo, Barcelona, Singapore, Paris, New York, London)
+- **🌍 Global City Support (AI)** - Plans trips to ANY city worldwide using Claude; includes a built-in dataset for 6 popular destinations (Tokyo, Barcelona, Singapore, Paris, New York, London) as a reliable fallback
 - **📍 Contextual Recommendations** - Matches attractions to your preferences (food, culture, nature, nightlife, family-friendly)
 - **🗺️ Interactive Links** - Every attraction includes Google Maps links for easy navigation
 - **📆 Calendar Export** - Generates .ics files you can import into Google Calendar, Apple Calendar, etc.
@@ -26,7 +26,7 @@ User → ASI:One → Trip Coordinator Agent
                         │
                         ├─→ Intent Parser (Claude-powered)
                         ├─→ Data Layer (Built-in POI database)
-                        ├─→ Itinerary Planner (Smart scheduling)
+                        ├─→ LLM Itinerary Planner (Claude-powered) + Static Fallback
                         └─→ Exporters (Markdown + ICS calendar)
 ```
 
@@ -34,9 +34,10 @@ User → ASI:One → Trip Coordinator Agent
 
 1. **[agent.py](agent.py)** - Main coordinator using uAgents + Chat Protocol
 2. **[intent.py](intent.py)** - Claude-powered natural language understanding
-3. **[data_sources.py](data_sources.py)** - Rich built-in POI database (no external APIs needed)
-4. **[planner.py](planner.py)** - Intelligent itinerary builder with geographic clustering
-5. **[exporters.py](exporters.py)** - Markdown formatter + calendar file generator
+3. **[llm_planner.py](llm_planner.py)** - Claude-powered itinerary planner for ANY city (with graceful fallback to static planner)
+4. **[data_sources.py](data_sources.py)** - Rich built-in POI database (no external APIs needed)
+5. **[planner.py](planner.py)** - Static/fallback itinerary builder with geographic clustering
+6. **[exporters.py](exporters.py)** - Markdown formatter + calendar file generator
 
 ## 🚀 Quick Start
 
@@ -88,6 +89,9 @@ AGENT_PORT=8000
 ```bash
 python agent.py
 ```
+**Note:**
+A one way setup with windows: 
+`powershell -NoProfile -ExecutionPolicy Bypass -Command "./start_web_app.ps1 -BackendPort 5002 -FrontendPort 8080"`
 
 You should see output like:
 ```
@@ -95,7 +99,9 @@ INFO:     [trip_coordinator]: Trip Planner Agent started!
 INFO:     [trip_coordinator]: Agent address: agent1q...
 INFO:     [trip_coordinator]: Agent port: 8000
 INFO:     [trip_coordinator]: Chat Protocol enabled and manifest published
-INFO:     [trip_coordinator]: Supported cities: Tokyo, Barcelona, Singapore, Paris, New York, London
+INFO:     [trip_coordinator]: 🌍 AI-Powered Planning: Can plan trips to ANY city worldwide!
+INFO:     [trip_coordinator]: 📊 Static Database: Tokyo, Barcelona, Singapore, Paris, New York, London (enhanced with AI)
+INFO:     [trip_coordinator]: ✅ Claude AI integration: ENABLED
 ```
 
 ## 💬 Usage Examples
@@ -216,11 +222,12 @@ async def on_chat(ctx: Context, sender: str, msg: ChatMessage):
     # 1. Acknowledge receipt
     await ctx.send(sender, ChatAcknowledgement(...))
 
-    # 2. Parse user intent with Claude
+    # 2. Parse user intent with Claude (intent.py → Anthropic)
     intent = parse_intent(user_text)
 
-    # 3. Generate itinerary
-    itinerary = build_itinerary(intent)
+    # 3. Generate itinerary with LLM (llm_planner.py → Anthropic),
+    #    gracefully falling back to static planner if API unavailable
+    itinerary = create_intelligent_itinerary(intent, use_llm=True)
 
     # 4. Format and respond
     response = itinerary_to_markdown(itinerary)
@@ -246,18 +253,25 @@ async def on_chat(ctx: Context, sender: str, msg: ChatMessage):
 - Upload your project files or connect your GitHub repository
 
 **Environment Variables:**
-```bash
-ANTHROPIC_API_KEY=your_claude_api_key
-AGENT_SEED=your_custom_seed
+```
+Trip_Planner_Agent/
+├── agent.py                  # Main uAgents agent + Chat Protocol
+├── intent.py                 # Claude-powered intent parsing (Anthropic)
+├── llm_planner.py            # LLM itinerary generation for ANY city (Anthropic)
+├── data_sources.py           # Built-in POI database for popular cities
+├── planner.py                # Static/fallback itinerary generation
+├── exporters.py              # Markdown + ICS calendar export
+├── requirements.txt          # Python dependencies
+├── .env.example              # Environment template
+├── .gitignore
+└── README.md                 # This file
 ```
 
-### Step 3: Enable Chat Protocol
+### Where the LLM is used (Agent)
 
-In the Agentverse agent settings:
-1. Go to **"Protocols"** tab
-2. Enable **"Chat Protocol"**
-3. Set discovery metadata:
-   - **Title**: Trip Planner
+- `agent.py` → calls `parse_intent()` which uses Anthropic Claude to extract destination/days/preferences.
+- `agent.py` → calls `create_intelligent_itinerary()` from `llm_planner.py`, which uses Claude to generate POIs and a day-by-day plan for ANY city, with safe fallbacks to the static planner on errors or when no API key is set.
+- `llm_planner.py` → uses Claude models (`claude-3-haiku-20240307`) to produce structured JSON outputs for POIs and itineraries.
    - **Description**: Plan personalized trips with AI - just tell me your destination, duration, and interests!
    - **Keywords**: travel, trip planning, itinerary, vacation, claude, ai travel agent
 
